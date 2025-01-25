@@ -1,7 +1,7 @@
 {
   "name": "jekyll-theme-chirpy",
   "version": "7.2.4",
-  "description": "A minimal, responsive, and feature-rich Jekyll theme for technical writing.",
+  "description": "FE개발자 서지훈의 망그러진 개발 블로그입니다.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cotes2020/jekyll-theme-chirpy.git"

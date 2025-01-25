@@ -19,7 +19,7 @@ title: zhun's blog # the main title
 tagline: 망그러진 개발 블로그 # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+  FE개발자 서지훈의 망그러진 개발 블로그입니다.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
