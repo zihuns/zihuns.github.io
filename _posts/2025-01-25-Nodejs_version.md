@@ -66,6 +66,15 @@ tags: [Node.js, npm]
 </details>
 
 <br>
+ ```javascript
+  package.json
+  
+  NODE_OPTIONS=--openssl-legacy-provider 추가
+  
+  "scripts": {
+      "serve": "npm run build:plugin_local && cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_OPTIONS=--openssl-legacy-provider BUILD_TYPE=pages vue-cli-service serve --mode localhost --open --hot",
+  }
+  ```
 
 # **기획 의도**
 
