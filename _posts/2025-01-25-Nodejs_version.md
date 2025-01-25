@@ -5,33 +5,7 @@ categories: [Fronte-End]
 tags: [Node.js, npm]
 ---
 
-# Node.js & NPM 버전 최신화
-
-# 23.07 - 23.10
-<details>
-  <summary>서칭</summary>
-  
-  [NPM Audit으로 패키지 취약점 관리하기](https://medium.com/bagelcode/npm-audit으로-패키지-취약점-관리하기-e42e0a418960)
-  
-  [Node.js 12에서 16로 한번에 업데이트 적용후기 - 환경 세팅편](https://velog.io/@djunnni/Node.js-12에서-16로-한번에-업데이트-적용후기-환경-세팅편)
-  
-  [nodejs 와 node-sass 버젼 호환 : Node Sass does not yet support your current environment](https://juntcom.tistory.com/167)
-  
-  [node.js와 NPM버전 업그레이드로 발생한 에러 해결하기](https://kang-ji.tistory.com/entry/nodejs와-NPM버전-업그레이드로-발생한-에러-해결하기)
-  
-  [Node.js 업데이트 후 node-sass 오류](https://velog.io/@nine9/Node.js-업데이트-후-node-sass-오류)
-  
-  [Sass Loader Error: Invalid options object that does not match the API schema](https://stackoverflow.com/questions/58184549/sass-loader-error-invalid-options-object-that-does-not-match-the-api-schema)
-  
-  ![Untitled](/assets/img/2025-01-25/2025-01-25-Nodejs_version_1.png)
-  
-  ![Untitled](/assets/img/2025-01-25/2025-01-25-Nodejs_version_2.png)
-  
-</details>
-
-<br>
-
-# **기획 의도**
+## **기획 의도**
 
 **현재** PC프로젝트와 MO프로젝트의 노드버전 v10.16.3(2019.10 ver)이 너무 오래 되어 추후에 생길 성능 최신화 및 모듈 에러를 방지하기 위한 최신화 작업 테스트를 로컬에서 선행해보기 위함.
 
@@ -41,7 +15,7 @@ tags: [Node.js, npm]
 2. 업그레이드로 인한 문제 발생시 문제 해결
 3. 문제 해결이 어려울 시 minor버전 순차적 다운그레이드
 
-# **작업 과정**
+## **작업 과정**
 
 우선, 현재 업무하는 환경에 영향을 주지 않기 위해 따로 작업용 폴더에 프로젝트를 클론하여 환경을 구성했습니다.
 
@@ -49,7 +23,7 @@ tags: [Node.js, npm]
 
 ![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_3.png)
 
-# **문제 해결**
+## **문제 해결**
 
 1. **node & node-sass & 버전 호환 이슈**
 2. **node-sass & sass-loader 버전 호환**
@@ -88,7 +62,7 @@ prependData 에서 additionalData로 바뀌었습니다.
 
 ![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_6.png)
 
-# 최종 결과물
+## 최종 결과물
 
 ![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_7.png)
 
