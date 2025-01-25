@@ -10,14 +10,6 @@ tags: [Node.js, npm]
 # 23.07 - 23.10
 <details>
   <summary>서칭</summary>
-    
-  ```jsx
-  ---
-  강제로 캐시 삭제
-  $ sudo npm cache clean -f
-  npm WARN using --force I sure hope you know what you are doing.
-  ---
-  ```
   
   [NPM Audit으로 패키지 취약점 관리하기](https://medium.com/bagelcode/npm-audit으로-패키지-취약점-관리하기-e42e0a418960)
   
@@ -35,46 +27,9 @@ tags: [Node.js, npm]
   
   ![Untitled](/assets/img/2025-01-25/2025-01-25-Nodejs_version_2.png)
   
-  # Node 18
-  
-  ```javascript
-  package.json
-  
-  NODE_OPTIONS=--openssl-legacy-provider 추가
-  
-  "scripts": {
-      "serve": "npm run build:plugin_local && cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_OPTIONS=--openssl-legacy-provider BUILD_TYPE=pages vue-cli-service serve --mode localhost --open --hot",
-  }
-  ```
-  
-  ```yaml
-  ---
-  terminal
-  
-  npm i node-sass@8
-  export NODE_OPTIONS=--openssl-legacy-provider
-  ---
-  ```
-  
-  ```js
-  ---
-  .npmrc
-  
-  node-options="--openssl-legacy-provider"
-  ---
-  ```
 </details>
 
 <br>
- ```javascript
-  package.json
-  
-  NODE_OPTIONS=--openssl-legacy-provider 추가
-  
-  "scripts": {
-      "serve": "npm run build:plugin_local && cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_OPTIONS=--openssl-legacy-provider BUILD_TYPE=pages vue-cli-service serve --mode localhost --open --hot",
-  }
-  ```
 
 # **기획 의도**
 
