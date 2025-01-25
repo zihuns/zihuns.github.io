@@ -4,8 +4,8 @@
   icon: "fab fa-github"
 
 - type: linkedin
-  icon: 'fab fa-linkedin'   # icons powered by <https://fontawesome.com/>
-  url:  'https://www.linkedin.com/in/%EC%A7%80%ED%9B%88-%EC%84%9C-3368a124a'                  # Fill with your Linkedin homepage
+  icon: "fab fa-linkedin" # icons powered by <https://fontawesome.com/>
+  url: "https://www.linkedin.com/in/zihuns" # Fill with your Linkedin homepage
 
 # - type: instagram
 #   icon: "fab fa-instagram"
