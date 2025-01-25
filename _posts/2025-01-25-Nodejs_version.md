@@ -37,8 +37,7 @@ tags: [Node.js, npm]
   
   # Node 18
   
-  ```js
-  ---
+  ```javascript
   package.json
   
   NODE_OPTIONS=--openssl-legacy-provider 추가
@@ -46,7 +45,6 @@ tags: [Node.js, npm]
   "scripts": {
       "serve": "npm run build:plugin_local && cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_OPTIONS=--openssl-legacy-provider BUILD_TYPE=pages vue-cli-service serve --mode localhost --open --hot",
   }
-  ---
   ```
   
   ```yaml
