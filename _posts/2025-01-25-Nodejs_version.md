@@ -1,7 +1,7 @@
 ---
 title: Node.js & NPM 버전 최신화
 date: 2025-01-25 01:00:00 +09:00
-categories: [Fronte-End]
+categories: [Frontend]
 tags: [Node.js, npm]
 ---
 

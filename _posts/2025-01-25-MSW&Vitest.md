@@ -1,7 +1,7 @@
 ---
 title: MSW 노드 환경 도입 및 Vitest 테스트 환경 세팅
 date: 2025-01-25 01:00:00 +09:00
-categories: [Fronte-End, MSW]
+categories: [Frontend, MSW]
 tags: [MSW, Vue.js, Vitest, TestCode]
 ---
 # MSW(Mock Service Worker)(2024) (1)

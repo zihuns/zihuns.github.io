@@ -1,7 +1,7 @@
 ---
 title: npm run local(2023)
 date: 2025-01-25 01:00:00 +09:00
-categories: [Fronte-End]
+categories: [Frontend]
 tags: [Node.js, npm, Webpack]
 ---
 
