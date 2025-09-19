@@ -103,8 +103,13 @@ async function setBuildTarget(testURL) {
 
 ---
 
-## 5. 참고 자료 (References)
+## 5. 기술 스택 (Tech Stack)
+
+`Node.js` `JavaScript` `Inquirer.js` `Cheerio` `Axios` `fs`
+
+---
+
+## 6. 참고 자료 (References)
 
 - [Inquirer.js 공식 문서](https://github.com/SBoudrias/Inquirer.js)
-
 - [Cheerio 문서](https://cheerio.js.org/docs/intro)

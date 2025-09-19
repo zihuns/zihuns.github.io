@@ -19,7 +19,7 @@ excerpt: "Node 10.16.3에서 LTS 기준(v10→v12→v14→v16)으로 업그레�
 1. **nvm으로 LTS 버전(v10→v12→v14→v16) 순차 전환 및 각 단계 검증**
 2. **매 단계 클린 설치 후 실행 테스트 루틴 확립**  
    - `rm -rf node_modules`  
-   - `npm ci` 또는 `npm i`  
+   - `npm i` 또는 `npm ci`  
    - `npm run build`/`serve`
 3. **node-sass·sass-loader·webpack 조합의 호환성 이슈 식별과 해결책 도출**
 
@@ -99,6 +99,12 @@ npm i --save-dev sass-loader@10.4.1
 
 ---
 
-## 5. 참고 자료 (References)
+## 5. 기술 스택 (Tech Stack)
+
+`Node.js` `nvm` `node-sass` `sass-loader` `webpack` `npm`
+
+---
+
+## 6. 참고 자료 (References)
 
 - [node-sass (npm)](https://www.npmjs.com/package/node-sass#node-version-support-policy)
