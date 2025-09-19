@@ -1,6 +1,7 @@
 ---
 title: "[Node.js] LTS 업그레이드 | 1. nvm 순차 전환과 Sass 로더 호환성 정리"
 contribution: 100%
+develop_period: 3.5months
 date: 2025-01-25 01:00:00 +0900
 categories: [Frontend, Node.js]
 tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]

@@ -1,6 +1,7 @@
 ---
 title: "[Node.js] LTS 업그레이드 | 2. nvm 순차 전환과 Dart Sass 전환"
 contribution: 100%
+develop_period: 2weeks
 date: 2025-08-25 01:00:00 +0900
 categories: [Frontend, Node.js]
 tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]
