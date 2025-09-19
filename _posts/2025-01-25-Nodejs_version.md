@@ -93,9 +93,9 @@ npm i --save-dev sass-loader@10.4.1
 }
 ```
 
-- ✅ Node 14.21.x까지는 큰 수정 없이 통과, Node 16.x에서는 node-sass 6.x 조정으로 안정화했습니다.
-- ✅ LTS 단계마다 동일한 검증 루틴을 적용해 회귀 이슈를 조기 발견했습니다.
-- ✅ sass-loader 옵션 변천을 정리해 설정 혼선을 줄였고, 장기적으로 빌드 체인 업데이트(webpack, vue-loader, sass-loader)가 필요함을 확인했습니다.
+- Node 14.21.x까지는 큰 수정 없이 통과, Node 16.x에서는 node-sass 6.x 조정으로 안정화했습니다.
+- LTS 단계마다 동일한 검증 루틴을 적용해 회귀 이슈를 조기 발견했습니다.
+- sass-loader 옵션 변천을 정리해 설정 혼선을 줄였고, 장기적으로 빌드 체인 업데이트(webpack, vue-loader, sass-loader)가 필요함을 확인했습니다.
 
 ---
 
