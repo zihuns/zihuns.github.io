@@ -1,70 +1,104 @@
 ---
-title: Node.js & NPM 버전 최신화
-contribution : 100%
-date: 2025-01-25 01:00:00 +09:00
-categories: [Frontend]
-tags: [Node.js, npm]
+title: "[Node.js] LTS 업그레이드: nvm 순차 전환과 Sass 로더 호환성 정리"
+contribution: 100%
+date: 2025-01-25 01:00:00 +0900
+categories: [Frontend, Node.js]
+tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]
+excerpt: "Node 10.16.3에서 LTS 기준(v10→v12→v14→v16)으로 업그레이드하며 node-sass·sass-loader 호환 이슈를 해결하고 Dart Sass 전환까지 정리했습니다."
 ---
 
-## **기획 의도**
+## 1. 들어가며 (Motivation)
 
-**현재** PC프로젝트와 MO프로젝트의 노드버전 v10.16.3(2019.10 ver)이 너무 오래 되어 추후에 생길 성능 최신화 및 모듈 에러를 방지하기 위한 최신화 작업 테스트를 로컬에서 선행해보기 위함.
+레거시 환경(Node 10.16.3)에서 모듈 설치 오류·보안 리스크를 줄이고 유지보수성을 높이기 위해 LTS 단위로 순차 업그레이드를 진행했습니다.  
+업무 환경에 영향이 없도록 별도 작업 디렉터리에 프로젝트를 클론해 단계별 빌드·서브 동작을 검증했습니다.
 
-# **작업 우선순위**
+---
 
-1. LTS버전을 기준으로 순차적 업그레이드
-2. 업그레이드로 인한 문제 발생시 문제 해결
-3. 문제 해결이 어려울 시 minor버전 순차적 다운그레이드
+## 2. 요구사항 (Requirements)
 
-## **작업 과정**
+1. **nvm으로 LTS 버전(v10→v12→v14→v16) 순차 전환 및 각 단계 검증**
+2. **매 단계 클린 설치 후 실행 테스트 루틴 확립**  
+   - `rm -rf node_modules`  
+   - `npm ci` 또는 `npm i`  
+   - `npm run build`/`serve`
+3. **node-sass·sass-loader·webpack 조합의 호환성 이슈 식별과 해결책 도출**
 
-우선, 현재 업무하는 환경에 영향을 주지 않기 위해 따로 작업용 폴더에 프로젝트를 클론하여 환경을 구성했습니다.
+---
 
-그 다음 우선순위에 따라, 현재 노드버전인 10.16.3 이후 LTS버전(v10, 12,14, 16)을 nvm을 이용하여 순차적으로 올리며 `rm -rf node_modules` , `npm i`, `npm run serve`를 반복 수행했습니다.
+## 3. 주요 이슈와 해결 (Troubleshooting)
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_3.png)
+### 3.1 Node & node-sass & 버전 호환 이슈
 
-## **문제 해결**
+기존 환경설정에서 별다른 변화 없이 Node v14.21.3까지는 정상적으로 업그레이드가 가능했습니다.  
+하지만 v16.20.1부터는 node-sass 모듈과 Node 버전의 호환 이슈가 발생했습니다.
 
-1. **node & node-sass & 버전 호환 이슈**
-2. **node-sass & sass-loader 버전 호환**
-3. **sass-loader 버전 변경에 따른 옵션 변화**
+- node-sass 6버전 설치를 시도했으나, vue와 webpack 버전 이슈로 인해 다음과 같이 조치했습니다.
 
-### **node & node-sass 버전 호환 이슈**
+```bash
+npm uninstall webpack
+npm i --save-dev webpack@4 # v4.46.0으로 고정
+npm uninstall node-sass
+npm i --save-dev node-sass@6
+```
 
-기존의 환경설정에서 별다른 변화없이 node v14.21.3까지는 이상 없이 노드 버전을 업그레이드 할 수 있었으나, v16.20.1 버전부터는 node-sass 모듈과 node의 버전 호환 이슈가 있었습니다. 그래서 node-sass를 6버전으로 설치하려 하였으나, vue와 webpack 버전 이슈로 인해 `npm uninstall webpack`, `npm i --save-dev webpack@4`하여 webpack
+이후 다시 빌드를 진행했습니다.
 
-v4.46.0 설치 진행 후 `npm uninstall node-sass`,  `npm i --save-dev node-sass@6` 하여 6버전을 설치하여 다시 빌드를 진행했습니다.
+### 3.2 node-sass & sass-loader 버전 호환
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_4.png)
+node-sass 설치 후 빌드 시 아래와 같은 에러가 발생했습니다.
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_5.png)
+```
+Node Sass version 6.0.1 is incompatible with ^4.0.0 || ^5.0.0.
+```
 
-### **node-sass & sass-loader 버전 호환**
+이는 node-sass와 sass-loader 버전 호환 문제입니다.  
+node-sass 버전을 낮추는 방법도 있지만, 이는 Node 및 의존성 모듈의 업그레이드 취지에 맞지 않아  
+**sass-loader 버전을 업그레이드**하는 방향으로 결정했습니다.
 
-node-sass 설치를 정상적으로 마치고 빌드를 실행한 결과, 
-Node Sass version 6.0.1 is incompatible with ^4.0.0 || ^5.0.0. 와 같은 에러 문구를 만났습니다.
+- 여러 버전을 테스트한 결과, `sass-loader@10.4.1`이 node-sass 6.x와 호환됨을 확인했습니다.
 
-이는 node-sass 와 sass-loader 버전 호환 문제로 node-sass 버전을 낮추는 해결책을 많이 사용하지만, 이는 node 및 관련 의존성 모듈의 버전 업그레이드의 취지에 맞지
+```bash
+npm i --save-dev sass-loader@10.4.1
+```
 
-않기 때문에 sass-loader의 버전을 업그레이드하여 문제를 해결하는 방향으로 결정했습니다. 그래서 호환되는 버전을 찾다 v10.4.1 버전이 호환되는 것을 찾았습니다.
+### 3.3 sass-loader 버전 변경에 따른 옵션 변화
 
-### **sass-loader 버전 변경에 따른 옵션 변화**
+- v8: `data` → `prependData`
+- v9+: `prependData` → `additionalData`
 
-sass-loader 또한 버전이 업그레이드됨에 따라 loaderOptions 에 변동 사항이 있었습니다.
+전역 SASS 주입은 `additionalData`로 통일합니다.
 
-v8의 경우
+---
 
-data 옵션이 prependData 로 바뀌었고
+## 4. 결과 & 배운 점 (Result & Learning)
 
-v9이상 버전의 경우
 
-prependData 에서 additionalData로 바뀌었습니다.
+### as-is
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_6.png)
+```json
+"devDependencies": {
+  "node-sass": "^4.9.0",
+  "sass-loader": "^7.1.0",
+  "webpack": "^4.41.2"
+}
+```
 
-## 최종 결과물
+### to-be
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_7.png)
+```json
+"devDependencies": {
+  "node-sass": "^6.0.1",
+  "sass-loader": "^10.4.1",
+  "webpack": "4.46.0"
+}
+```
 
-![image.png](/assets/img/2025-01-25/2025-01-25-Nodejs_version_8.png)
+- ✅ Node 14.21.x까지는 큰 수정 없이 통과, Node 16.x에서는 node-sass 6.x 조정으로 안정화했습니다.
+- ✅ LTS 단계마다 동일한 검증 루틴을 적용해 회귀 이슈를 조기 발견했습니다.
+- ✅ sass-loader 옵션 변천을 정리해 설정 혼선을 줄였고, 장기적으로 빌드 체인 업데이트(webpack, vue-loader, sass-loader)가 필요함을 확인했습니다.
+
+---
+
+## 5. 참고 자료 (References)
+
+- [node-sass (npm)](https://www.npmjs.com/package/node-sass#node-version-support-policy)
