@@ -6,58 +6,56 @@ categories: [Frontend, GITLAB-CI/CD]
 tags: [gitlab, slack, bash]
 ---
 
-# 1. 기능
 
-## **1-1. SLACK INCOMING WEBHOOK**
+## 1. 주요 기능 요약
 
-- mr_machine은 slack incoming webhook을 담당하는 job이고, 사용자가 MR을 생성하면 자동으로 수행되는 부분으로
-- send_slack_message(), mr_message() 함수와 그 외의 스크립트로 구성되어있습니다.
-- 기능은 크게 4가지로 이루어져있습니다.
-1. 
-    1. 대상그룹 호출 기능(@here, @fsd_display, @fsd_search)
-    2. Slack Incoming Webhook 비활성화
-    3. MR 충돌 감지
-    4. Slack Incoming Webhook을 통한 슬렉 메시지 전송
+### Slack Incoming Webhook (mr_machine job)
+- MR 생성 시 자동으로 슬랙 메시지 전송
+- 대상 그룹 호출(@here, @fsd_display, @fsd_search)
+- Draft: 제목으로 알림 비활성화
+- MR 충돌 감지 및 알림
 
-## **1-2. AUTO MR**
+---
 
-- create_MR은 MR 생성을 담당하는 job이고, 사용자가 labels에서 MR을 선택하면 자동으로 MR을 생성하는 부분으로
-- 기능은 크게 2가지로 이루어져있습니다.
-    1. Slack Incoming Webhook 비활성화
-    2. 자동 MR 생성
+## 2. 사용법
 
-# 2. 사용법
+### 2-1. MR 알림 on/off 설정
+MR 생성 시 기본적으로 슬랙 알림이 전송됩니다. 알림을 비활성화하려면 MR 제목을 `Draft:`로 시작하세요.
+다시 활성화하려면 Mark as ready를 클릭하거나, 커밋 추가/파이프라인 실행을 하면 됩니다. (우측 상단 점 3개 [ ⋮ ] 메뉴에서 Draft/Ready 토글 가능)
 
-다른 기능들은 사용자의 별다른 조작 없이 자동으로 수행되는 부분이므로, 아래 3가지 기능에 대한 사용법을 기술하도록 하겠습니다.
+![MR 알림 on/off](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_4_1.png)
+![MR 알림 Draft 예시](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_4_2.png)
+![MR 알림 Ready 예시](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_4_3.png)
 
-1. 대상그룹 호출 기능(@here, @fsd_display, @fsd_search)
-2. Slack Incoming Webhook 비활성화
-3. 자동 MR 생성
+### 2-2. 대상 그룹 호출
+MR 생성 시 labels에서 @here, @fsd_display, @fsd_search 등 원하는 그룹을 선택하면 해당 그룹이 슬랙 메시지에서 호출됩니다.
+![대상 그룹 호출 예시1](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_1.png)
+![대상 그룹 호출 예시2](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_2.png)
 
-## **2-1. 대상그룹 호출 기능(@here, @fsd_display, @fsd_search)**
+### 2-3. 자동 MR 생성
+labels에서 MR을 선택하면 자동으로 MR이 생성됩니다.
 
-- ****해당 기능은 MR 생성 시 labels를 이용하는 기능으로, 원하는 대상에 해당하는 label을 선택하면 슬렉 메시지에서 해당 그룹을 호출하게 됩니다.
 
-![image.png](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_1.png)
+## 3. 자주 발생하는 문제와 해결법
 
-![image.png](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_2.png)
+---
 
-## **2-2. Slack Incoming Webhook 비활성화**
+## 참고 이미지
 
-- 해당 기능은 MR 생성 시 슬렉으로 메시지 전송하는 것을 비활성화하는 기능으로, Draft: 를 선택하면 메시지 전송이 비활성화 됩니다.
-- 활성화 하고싶은 경우 Mark as ready 버튼을 누르고 Pipelines탭에서 Run pipeline 하면 됩니다.
+위 이미지는 MR 알림 on/off 및 Draft/Ready 상태에서의 실제 화면 예시입니다.
 
-![image.png](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_3.png)
+1. **slack 알림이 오지 않음**  
+→ SLACK_URL 변수가 누락된 경우입니다. Settings > CI/CD > Variables에서 SLACK_URL을 등록하세요.
 
-![image.png](/assets/img/2025-01-25/2025-01-25-GITLAB_CI_guide_4.png)
+2. **프로필 사진 대신 글자만 나옴**  
+→ GitLab 사용자 이름을 규칙에 맞게 변경하거나, Slack에 해당 이모지를 추가하세요.
 
-## **2-3. 자동 MR 생성**
+3. **프리징 기간에 긴급 배포 필요**  
+→ Settings > CI/CD > Variables에서 프리징 기간 변수(F_S_DATE, F_E_DATE)를 임시로 변경 후, 배포가 끝나면 원래 값으로 복구하세요.
 
-- 해당 기능은 MR 생성 시 labels를 이용하는 기능으로, 자동 MR 생성을 원할 시, labels에서 MR을 선택하면 MR이 생성됩니다.
-- case 1. source → develop MR을 만들 경우, 가장 최신 release 브랜치를 탐색해서 MR을 추가로 생성하고,
-- case 2. source → release MR을 만들 경우, develop 브랜치를 target으로 MR을 추가로 생성합니다.
+---
 
-# 3. 코드해석
+## 4. 주요 코드 및 해설
 
 ```jsx
 #외부참조 부분 // .gitlab-ci.yml
@@ -77,47 +75,6 @@ before_script:
     - |
       PROFILE="${GITLAB_USER_NAME%%(*}"
 
-# AUTO MR JOB
-create_MR:
-  stage: build
-
-  script: |
-    if [[ "$CI_MERGE_REQUEST_LABELS" != *"MR"* ]] ; then
-      exit 0;
-    fi
-
-    DRAFT=""
-    [[ "$CI_MERGE_REQUEST_TITLE" == Draft:* ]] && DRAFT="Draft: "
-
-    if [ ${TB} == "develop" ] ; then
-      git fetch
-      TARGET_BRANCH=$(git branch -r | grep -E 'release-[0-9]{6}-1|release/[0-9]{6}' | sort -r | head -n 1 | cut -d'/' -f2)
-    elif [ ${TB:0:7} == "release" ] ; then
-      TARGET_BRANCH="develop"
-    fi
-
-    # GitLab API 호스트 설정
-    HOST=""
-
-    # 사용자 정보 설정
-    USER_NAME=$(echo ${GITLAB_USER_EMAIL%%@*} | tr -d "." | tr '[:lower:]' '[:upper:]')
-    PRIVATE_TOKEN=$(eval echo \${${USER_NAME}_COMMIT_TOKEN})
-
-    BODY="{
-      \"project_id\": ${CI_PROJECT_ID},
-      \"source_branch\": \"${CI_COMMIT_REF_NAME}\",
-      \"target_branch\": \"${TARGET_BRANCH}\",
-      \"description\" : \" ##### 티켓명: ${CI_COMMIT_REF_NAME}\n ##### 수정 내용(상세)\n ${CI_COMMIT_MESSAGE} \",
-      \"title\" : \" ${DRAFT} ${CI_COMMIT_TITLE}\",
-      \"labels\" : \" "$CI_MERGE_REQUEST_LABELS"\"
-    }";
-
-    curl -X POST "${HOST}${CI_PROJECT_ID}/merge_requests" \
-    --header "PRIVATE-TOKEN:${PRIVATE_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --data "${BODY}";
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 # SLACK INCOMING WEBHOOK JOB
 mr_machine:
@@ -182,18 +139,8 @@ mr_machine:
 
 ---
 
-MR 생성 시 수행되는 JOB은 create_MR과 mr_machine 2개입니다.
+MR 생성 시 수행되는 JOB은 mr_machine 1개입니다.
 
-- create_MR(line 19 ~ 58)
-    - line 23 ~ 25
-        - label 중 MR이 포함되어 있는지 확인하고 없을 경우 job을 마칩니다.
-    - line 27 ~ 28
-        - MR 제목이 Draft: 로 시작하면 변수 DRAFT에 "Draft: "를 할당합니다.
-    - line 30 ~ 35
-        - target 브랜치가 develop인 경우 원격 브랜치 중 가장 최신 날짜의 release 브랜치를 검색해서 변수 TARGET_BRANCH에 "release브랜치명"을 할당합니다.
-        - target 브랜치가 release인 경우 변수 TARGET_BRANCH에 "develop"을 할당합니다.
-    - line 37 ~ 56
-        - USER_NAME에 해당하는 커밋 토큰이 프로젝트 변수에 설정되어 있는 경우 MR을 생성합니다. ([jihun.seo@lotte.net](mailto:jihun.seo@lotte.net)일 경우, JIHUN.SEO_COMMIT_TOKEN 값이 미리 설정되어야함)
 - mr_machine(line 61 ~ 108)
     - line 65 ~ 70
         - 3개의 argument를 전달 받아 slack으로 메시지를 보냅니다.
