@@ -1,5 +1,6 @@
 ---
 title: GITLAB CI & SLACK WEBHOOK(2024) - 가이드
+contribution : 100%
 date: 2025-01-25 01:00:00 +09:00
 categories: [Frontend, GITLAB-CI/CD]
 tags: [gitlab, slack, bash]

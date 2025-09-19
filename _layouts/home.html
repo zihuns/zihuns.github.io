@@ -87,6 +87,9 @@ refactor: true
                 <!-- posted date -->
                 <i class="far fa-calendar fa-fw me-1"></i>
                 {% include datetime.html date=post.date lang=lang %}
+                <!-- contribution -->
+                <i class="fas fa-user fa-fw me-1"></i>
+                <span>{{ post.contribution | default: "0%" }}</span>
 
                 <!-- categories -->
                 {% if post.categories.size > 0 %}

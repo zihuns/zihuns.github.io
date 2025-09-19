@@ -1,5 +1,6 @@
 ---
 title: Writing a New Post
+contribution : 100%
 author: cotes
 date: 2019-08-08 14:10:00 +0800
 lastmod: 2025-01-31 14:30:00 +0900

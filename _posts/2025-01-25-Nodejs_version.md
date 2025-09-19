@@ -1,5 +1,6 @@
 ---
 title: Node.js & NPM 버전 최신화
+contribution : 100%
 date: 2025-01-25 01:00:00 +09:00
 categories: [Frontend]
 tags: [Node.js, npm]
