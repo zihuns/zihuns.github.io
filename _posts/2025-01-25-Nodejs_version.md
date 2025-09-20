@@ -8,6 +8,11 @@ tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]
 excerpt: "Node 10.16.3에서 LTS 기준(v10→v12→v14→v16)으로 업그레이드하며 node-sass·sass-loader 호환 이슈를 해결하고 Dart Sass 전환까지 정리했습니다."
 ---
 
+> 📌 이 글은 **LTS 업그레이드** 중 1편입니다.  
+> 2편: [nvm 순차 전환과 Dart Sass 전환](/posts/nodejs_version_2)  
+
+---
+
 ## 1. 들어가며 (Motivation)
 
 레거시 환경(Node 10.16.3)에서 모듈 설치 오류·보안 리스크를 줄이고 유지보수성을 높이기 위해 LTS 단위로 순차 업그레이드를 진행했습니다.  
