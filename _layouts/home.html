@@ -117,17 +117,24 @@ refactor: true
                     {% endif %}
                   </span>
                 {% endif %}
-                {% assign contribution_val = post.contribution | remove: '%' | plus: 0 %}
-                {% if contribution_val > 70 %}
-                  {% assign badge_color = 'bg-success' %}
-                {% elsif contribution_val > 30 %}
-                  {% assign badge_color = 'bg-warning' %}
-                {% else %}
-                  {% assign badge_color = 'bg-secondary' %}
-                {% endif %}
-                <span class="badge {{ badge_color }} ms-2" title="기여도">
-                  기여 {{ post.contribution | default: "0%" }}
-                </span>
+                {%- comment -%} ---------- 1) 기여도 숫자 가져오기 ---------- {%- endcomment -%}
+                {%- assign contribution_val = post.contribution | default: '0' | plus: 0 -%}
+
+                {%- comment -%} ---------- 2) 뱃지 색상 결정 ---------- {%- endcomment -%}
+                {%- if contribution_val > 70 -%}
+                  {%- assign badge_color = 'bg-success' -%}
+                {%- elsif contribution_val > 30 -%}
+                  {%- assign badge_color = 'bg-warning' -%}
+                {%- else -%}
+                  {%- assign badge_color = 'bg-secondary' -%}
+                {%- endif -%}
+
+                {%- comment -%} ---------- 3) 0이면 뱃지 미노출 ---------- {%- endcomment -%}
+                {%- if contribution_val > 0 -%}
+                  <span class="badge {{ badge_color }} ms-2" title="기여도">
+                    기여 {{ contribution_val }}%
+                  </span>
+                {%- endif -%}
               </div>
 
               {% if post.pin %}

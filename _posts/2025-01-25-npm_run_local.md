@@ -1,6 +1,6 @@
 ---
 title: "[Node.js] 로컬 환경 자동화: CLI 기반 빌드 타겟 & URL 세팅"
-contribution: 100%
+contribution: 100
 date: 2025-01-25 01:00:00 +0900
 start_date: 2025-01-20
 end_date: 2025-01-25

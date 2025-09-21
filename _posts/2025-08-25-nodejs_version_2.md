@@ -1,6 +1,6 @@
 ---
 title: "[Node.js] LTS 업그레이드 | 2. nvm 순차 전환과 Dart Sass 전환"
-contribution: 100%
+contribution: 100
 date: 2025-08-25 01:00:00 +0900
 start_date: 2025-01-20
 end_date: 2025-01-25
