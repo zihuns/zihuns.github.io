@@ -102,21 +102,31 @@ refactor: true
               </div>
 
               <div class="post-meta-right d-flex align-items-center ms-auto">
-                {% if post.start_date and post.end_date %}
-                  {% assign start_date = post.start_date | date: '%s' %}
-                  {% assign end_date = post.end_date | date: '%s' %}
-                  {% assign diff_seconds = end_date | minus: start_date %}
-                  {% assign diff_days = diff_seconds | divided_by: 86400 %}
-                  {% assign diff_months = diff_days | divided_by: 30 %}
+                <!-- 개발 기간 -->
+                {%- comment -%} ---------- 1) 두 날짜 모두 입력되었을 때 ---------- {%- endcomment -%}
+                {%- if post.start_date and post.end_date -%}
+                  {%- assign start_ts = post.start_date | date: '%s' -%}
+                  {%- assign end_ts   = post.end_date   | date: '%s' -%}
+                  {%- assign diff_seconds = end_ts | minus: start_ts -%}
+                  {%- assign diff_days    = diff_seconds | divided_by: 86400 -%}
+                  {%- assign diff_months  = diff_days    | divided_by: 30    -%}
+
                   <i class="fas fa-clock fa-fw ms-2 me-1" title="개발기간"></i>
                   <span title="개발기간">
-                    {% if diff_months > 0 %}
+                    {%- if diff_months > 0 -%}
                       {{ diff_months }}months
-                    {% else %}
+                    {%- else -%}
                       {{ diff_days }}days
-                    {% endif %}
+                    {%- endif -%}
                   </span>
-                {% endif %}
+
+                {%- comment -%} ---------- 2) 시작일만 있고 종료일이 없을 때 ---------- {%- endcomment -%}
+                {%- elsif post.start_date and (post.end_date == nil or post.end_date == '') -%}
+                  <i class="fas fa-clock fa-fw ms-2 me-1" title="개발기간"></i>
+                  <span class="badge bg-warning text-dark" title="진행 중">WIP</span>
+                {%- endif -%}
+
+                <!-- 기여도 -->
                 {%- comment -%} ---------- 1) 기여도 숫자 가져오기 ---------- {%- endcomment -%}
                 {%- assign contribution_val = post.contribution | default: '0' | plus: 0 -%}
 
