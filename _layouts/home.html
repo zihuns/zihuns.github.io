@@ -102,12 +102,32 @@ refactor: true
               </div>
 
               <div class="post-meta-right d-flex align-items-center ms-auto">
-                <i class="fas fa-user fa-fw ms-2 me-1" title="기여도"></i>
-                <span title="기여도">{{ post.contribution | default: "0%" }}</span>
-                {% if post.develop_period %}
+                {% if post.start_date and post.end_date %}
+                  {% assign start_date = post.start_date | date: '%s' %}
+                  {% assign end_date = post.end_date | date: '%s' %}
+                  {% assign diff_seconds = end_date | minus: start_date %}
+                  {% assign diff_days = diff_seconds | divided_by: 86400 %}
+                  {% assign diff_months = diff_days | divided_by: 30 %}
                   <i class="fas fa-clock fa-fw ms-2 me-1" title="개발기간"></i>
-                  <span title="개발기간">{{ post.develop_period }}</span>
+                  <span title="개발기간">
+                    {% if diff_months > 0 %}
+                      {{ diff_months }}months
+                    {% else %}
+                      {{ diff_days }}days
+                    {% endif %}
+                  </span>
                 {% endif %}
+                {% assign contribution_val = post.contribution | remove: '%' | plus: 0 %}
+                {% if contribution_val > 70 %}
+                  {% assign badge_color = 'bg-success' %}
+                {% elsif contribution_val > 30 %}
+                  {% assign badge_color = 'bg-warning' %}
+                {% else %}
+                  {% assign badge_color = 'bg-secondary' %}
+                {% endif %}
+                <span class="badge {{ badge_color }} ms-2" title="기여도">
+                  기여 {{ post.contribution | default: "0%" }}
+                </span>
               </div>
 
               {% if post.pin %}

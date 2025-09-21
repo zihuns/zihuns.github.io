@@ -36,6 +36,20 @@ script_includes:
         </span>
       {% endif %}
 
+      <!-- contribution and development period -->
+      <div>
+        {% if page.contribution %}
+          <span>
+            기여도 {{ page.contribution }}
+          </span>
+        {% endif %}
+        {% if page.start_date and page.end_date %}
+          <span>
+            개발 기간: {{ page.start_date | date: "%Y.%m.%d" }} ~ {{ page.end_date | date: "%Y.%m.%d" }}
+          </span>
+        {% endif %}
+      </div>
+
       {% if page.image %}
         {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
         {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
