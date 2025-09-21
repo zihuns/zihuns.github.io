@@ -1,8 +1,9 @@
 ---
 title: "[Node.js] 로컬 환경 자동화: CLI 기반 빌드 타겟 & URL 세팅"
 contribution: 100%
-develop_period: 2.5months
 date: 2025-01-25 01:00:00 +0900
+start_date: 2025-01-20
+end_date: 2025-01-25
 categories: [Frontend, Node.js]
 tags: [Node.js, CLI, inquirer, cheerio, 로컬환경자동화]
 excerpt: "CLI에서 빌드 타겟 선택과 테스트 URL 크롤링을 통해 로컬 환경을 자동 세팅하는 과정을 정리했습니다."

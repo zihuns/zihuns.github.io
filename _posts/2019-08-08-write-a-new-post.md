@@ -4,6 +4,8 @@ contribution : 100%
 author: cotes
 date: 2019-08-08 14:10:00 +0800
 lastmod: 2025-01-31 14:30:00 +0900
+start_date: 2019-08-01
+end_date: 2019-08-08
 categories: [Blogging, Tutorial]
 tags: [writing]
 render_with_liquid: false
