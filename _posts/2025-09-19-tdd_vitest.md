@@ -1,7 +1,7 @@
 ---
-title: "TDD문화 도입 with Vitest"
+title: "TDD문화 도입 | (1) Vitest"
 contribution: 70
-date: 2025-09-20 01:00:00 +0900
+date: 2025-08-01 01:00:00 +0900
 lastmod: 2025-09-22 14:30:00 +0900
 start_date: 2025-06-20
 end_date:
@@ -10,6 +10,11 @@ tags: [TDD, Vitest, 테스트, 프론트엔드, CI]
 excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 문화 정착 과정을 공유합니다."
 ---
 
+> 📌 이 글은 **TDD 시리즈** 중 1편입니다.  
+> 2편: [주간 커버리지 관리](/posts/tdd_bigbro)  
+> 3편: [파이프라인 구축 (GitLab CI 활용)](/posts/tdd_gitlab)
+
+---
 
 ## 1. 문제 상황 또는 동기 (Motivation)
 - 기존에는 테스트코드의 필요성을 크게 느끼지 못했으나, 실제 서비스 운영 중 잦은 회귀 버그와 코드 변경에 대한 불안감이 있었습니다.
