@@ -1,9 +1,10 @@
 ---
 title: "[Node.js] LTS 업그레이드 | 2. nvm 순차 전환과 Dart Sass 전환"
 contribution: 100
-date: 2025-08-25 01:00:00 +0900
-start_date: 2025-01-20
-end_date: 2025-01-25
+date: 2025-07-10 01:00:00 +0900
+lastmod: 2025-09-21 14:30:00 +0900
+start_date: 2025-06-23
+end_date: 2025-07-08
 categories: [Frontend, Node.js]
 tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]
 excerpt: "Node 10.16.3에서 LTS 기준(v10→v12→v14→v16)으로 업그레이드하며 node-sass·sass-loader 호환 이슈를 해결하고 Dart Sass 전환까지 정리했습니다."
