@@ -1,6 +1,7 @@
 ---
 title: "TDD문화 도입 | (1) Vitest"
 contribution: 70
+members: 3
 date: 2025-08-01 01:00:00 +0900
 lastmod: 2025-09-22 14:30:00 +0900
 start_date: 2025-06-20

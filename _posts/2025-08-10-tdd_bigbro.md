@@ -1,10 +1,12 @@
 ---
 title: "TDD문화 도입 | (2) 주간 커버리지 관리"
 contribution: 60
+members: 2
 date: 2025-08-10 01:00:00 +0900
 lastmod: 2025-09-22 14:30:00 +0900
 start_date: 2025-07-29
 end_date: 2025-07-30
+publish: false
 categories: [Frontend, Test]
 tags: [TDD, Vitest, 테스트, 프론트엔드, CI]
 excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 문화 정착 과정을 공유합니다."

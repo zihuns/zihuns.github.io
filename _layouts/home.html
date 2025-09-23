@@ -50,8 +50,19 @@ refactor: true
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
     <article class="card-wrapper card">
-      <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
-        {% assign card_body_col = '12' %}
+      {% if post.publish == false %}
+        <div class="post-preview row g-0 flex-md-row-reverse" style="background-color: rgba(128, 128, 128, 0.1); cursor: not-allowed;"> <div class="col-md-12">
+            <div class="card-body d-flex flex-column">
+              <h1 class="card-title my-2 mt-md-0">{{ post.title }}</h1>
+              <div class="card-text content mt-0 mb-3">
+                <p>작성 중인 글입니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
+          {% assign card_body_col = '12' %}
 
         {% if post.image %}
           {% assign src = post.image.path | default: post.image %}
@@ -126,6 +137,12 @@ refactor: true
                   <span class="badge bg-warning text-dark" title="진행 중">WIP</span>
                 {%- endif -%}
 
+                <!-- 참여 인원 -->
+                {%- if post.members -%}
+                  <i class="fas fa-user-friends fa-fw ms-2" title="참여인원"></i>
+                  <span title="참여인원">{{ post.members }}</span>
+                {%- endif -%}
+
                 <!-- 기여도 -->
                 {%- comment -%} 1) 기여도 숫자 가져오기  {%- endcomment -%}
                 {%- assign contribution_val = post.contribution | plus: 0 -%}
@@ -162,7 +179,8 @@ refactor: true
           </div>
           <!-- .card-body -->
         </div>
-      </a>
+        </a>
+      {% endif %}
     </article>
   {% endfor %}
 </div>
