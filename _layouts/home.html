@@ -148,18 +148,19 @@ refactor: true
                 {%- assign contribution_val = post.contribution | plus: 0 -%}
 
                 {%- comment -%} 2) 구간별 뱃지 색상 결정  {%- endcomment -%}
+                {%- assign text_color_class = '' -%}
                 {%- if contribution_val > 70 -%}
                   {%- assign badge_color = 'bg-success' -%}     
                 {%- elsif contribution_val > 30 -%}
                   {%- assign badge_color = 'bg-warning' -%}     
+                  {%- assign text_color_class = 'text-dark' -%}
                 {%- elsif contribution_val > 0 -%}
                   {%- assign badge_color = 'bg-secondary' -%}   
                 {%- endif -%}
 
-                {%- comment -%} 3) 0이면 뱃지 숨김, 나머지는 출력  {%- endcomment -%}
                 {%- if contribution_val > 0 -%}
                   <span
-                    class="badge {{ badge_color }} ms-2"
+                    class="badge {{ badge_color }} {{ text_color_class }} ms-2"
                     title="기여도 {{ contribution_val }}%"
                   >
                     기여 {{ contribution_val }}%
