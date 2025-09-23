@@ -1,118 +1,119 @@
 ---
-title: "[Node.js] LTS 업그레이드 | 2. nvm 순차 전환과 Dart Sass 전환"
+title: "[Node.js] LTS 업그레이드 | (2) 16 → 22 업그레이드 과정과 마이그레이션 이슈 정리"
 contribution: 100
 date: 2025-07-10 01:00:00 +0900
 lastmod: 2025-09-21 14:30:00 +0900
 start_date: 2025-06-23
 end_date: 2025-07-08
 categories: [Frontend, Node.js]
-tags: [Node.js, npm, nvm, webpack, sass-loader, Dart Sass]
-excerpt: "Node 10.16.3에서 LTS 기준(v10→v12→v14→v16)으로 업그레이드하며 node-sass·sass-loader 호환 이슈를 해결하고 Dart Sass 전환까지 정리했습니다."
+tags: [Node.js, webpack, vite, sass, Vue]
+excerpt: "Node.js LTS 16에서 22로 업그레이드하면서 겪은 빌드 환경별 이슈와 해결 과정을 정리했습니다. vite 번들러는 무난했지만, webpack@4 기반 프로젝트에서는 OpenSSL, node-sass 관련 문제가 있었습니다."
 ---
 
 > 📌 이 글은 **LTS 업그레이드** 중 2편입니다.  
 > 1편: [nvm 순차 전환과 Sass 로더 호환성 정리](/posts/nodejs_version)  
 
 ---
-[[fo-common] node-sass to dart-sass 전환] 25.06.24 - 25.07.01
-## 1. 들어가며 (Motivation)
 
-레거시 환경(Node 10.16.3)에서 모듈 설치 오류·보안 리스크를 줄이고 유지보수성을 높이기 위해 LTS 단위로 순차 업그레이드를 진행했습니다.  
-업무 환경에 영향이 없도록 별도 작업 디렉터리에 프로젝트를 클론해 단계별 빌드·서브 동작을 검증했습니다.
+## 1. 들어가며
 
----
+최근 프로젝트 환경을 **Node.js LTS 16 → 22**로 업그레이드했습니다.  
+일부 서비스는 vite를 사용하고 있어 큰 문제가 없었지만, webpack@4 기반 서비스에서는 예상치 못한 이슈들이 발생했습니다.  
 
-## 2. 요구사항 (Requirements)
-
-1. **nvm으로 LTS 버전(v10→v12→v14→v16) 순차 전환 및 각 단계 검증**
-2. **매 단계 클린 설치 후 실행 테스트 루틴 확립**  
-   - `rm -rf node_modules`  
-   - `npm i` 또는 `npm ci`  
-   - `npm run build`/`serve`
-3. **node-sass·sass-loader·webpack 조합의 호환성 이슈 식별과 해결책 도출**
+이번 글에서는 실제 마이그레이션 과정에서 마주한 문제들과 그 해결 과정을 기록합니다.
 
 ---
 
-## 3. 주요 이슈와 해결 (Troubleshooting)
+## 2. 번들러별 차이
 
-### 3.1 Node & node-sass & 버전 호환 이슈
+### 2.1 vite 기반 프로젝트
+- **대상:** `fo-display-pc-ui`, `fo-display-mo-ui`  
+- **상황:** vite는 Node.js 최신 버전에 잘 대응하고 있었기 때문에, 특별한 이슈 없이 빌드 및 실행이 가능했습니다.  
 
-기존 환경설정에서 별다른 변화 없이 Node v14.21.3까지는 정상적으로 업그레이드가 가능했습니다.  
-하지만 v16.20.1부터는 node-sass 모듈과 Node 버전의 호환 이슈가 발생했습니다.
+👉 별도 수정 없이 `npm install` 후 바로 정상 동작.
 
-- node-sass 6버전 설치를 시도했으나, vue와 webpack 버전 이슈로 인해 다음과 같이 조치했습니다.
+---
+
+### 2.2 webpack@4 기반 프로젝트
+- **대상:** `fo-common-pc-ui`, `fo-common-mo-ui`  
+- **상황:** Node.js 22 환경에서 빌드 시 `OpenSSL` 관련 오류 발생.  
+- webpack 4는 오래된 Node.js 버전 기준으로 작성된 의존성이 많아, 최신 LTS와 충돌했습니다.  
+
+#### 대표 에러 메시지 (예시)
+```yaml
+error:0308010C:digital envelope routines::unsupported
+```
+
+이 문제는 `--openssl-legacy-provider` 플래그를 붙여 해결할 수 있었지만, 근본적으로는 **webpack 5 업그레이드**가 필요합니다.  
+
+---
+
+## 3. webpack 5 업그레이드를 못 한 이유
+
+webpack 5로 넘어가려면 단순히 webpack 버전만 올리면 되는 게 아니었습니다.  
+현재 프로젝트는 **Vue 2 기반**인데, vue-loader 등 주요 로더들이 Vue 3를 기준으로 webpack 5를 지원하고 있습니다.  
+
+즉,  
+- webpack 4 → 5 마이그레이션  
+- 동시에 Vue 2 → 3 전환  
+
+두 가지가 묶여 있어야 합니다.  
+
+Vue 3 마이그레이션은 규모가 크고, 기존 레거시 코드와의 호환성 문제까지 검토해야 하므로 이번 Node.js 업그레이드 범위에서는 적용하지 못했습니다.  
+
+👉 따라서 **단기적으로는 OpenSSL Legacy Provider 옵션을 활용**하여 빌드 환경을 유지하는 선에서 마무리했습니다.
+
+---
+
+## 4. node-sass → dart-sass 전환
+
+Node.js 22에서 `node-sass`는 더 이상 빌드가 원활하지 않았습니다.  
+(내부적으로 사용하던 binding이 최신 Node 버전을 지원하지 않음)
+
+따라서 `dart-sass`로 전환했습니다:
 
 ```bash
-npm uninstall webpack
-npm i --save-dev webpack@4 # v4.46.0으로 고정
 npm uninstall node-sass
-npm i --save-dev node-sass@6
+npm install sass --save-dev
 ```
 
-이후 다시 빌드를 진행했습니다.
+- **node-sass** → C++ 기반 바인딩, Node.js 버전 호환성 문제가 잦음
 
-### 3.2 node-sass & sass-loader 버전 호환
+- **dart-sass** → JS 기반, Node.js 최신 버전에서도 안정적으로 동작
 
-node-sass 설치 후 빌드 시 아래와 같은 에러가 발생했습니다.
-
-```
-Node Sass version 6.0.1 is incompatible with ^4.0.0 || ^5.0.0.
-```
-
-이는 node-sass와 sass-loader 버전 호환 문제입니다.  
-node-sass 버전을 낮추는 방법도 있지만, 이는 Node 및 의존성 모듈의 업그레이드 취지에 맞지 않아  
-**sass-loader 버전을 업그레이드**하는 방향으로 결정했습니다.
-
-- 여러 버전을 테스트한 결과, `sass-loader@10.4.1`이 node-sass 6.x와 호환됨을 확인했습니다.
-
-```bash
-npm i --save-dev sass-loader@10.4.1
-```
-
-### 3.3 sass-loader 버전 변경에 따른 옵션 변화
-
-- v8: `data` → `prependData`
-- v9+: `prependData` → `additionalData`
-
-전역 SASS 주입은 `additionalData`로 통일합니다.
+기존의 sass-loader 설정에서 특별히 바꿀 필요는 없었고, 단순히 node-sass 대신 sass 패키지를 사용하도록만 수정했습니다.
 
 ---
 
-## 4. 결과 & 배운 점 (Result & Learning)
+## 5. 정리 (Result & Learning)
 
+- **vite 기반 서비스** : 문제 없이 Node.js 22 대응
 
-### as-is
+- **webpack 4 기반 서비스** : OpenSSL 관련 에러 → --openssl-legacy-provider 옵션으로 임시 대응
 
-```json
-"devDependencies": {
-  "node-sass": "^4.9.0",
-  "sass-loader": "^7.1.0",
-  "webpack": "^4.41.2"
-}
-```
+- **sass 전환** : node-sass → dart-sass로 교체하여 Node.js 22 지원 확보
 
-### to-be
+- **webpack 5 업그레이드 보류** : Vue 2 → 3 마이그레이션 필요성 때문에 당장은 적용하지 못함
 
-```json
-"devDependencies": {
-  "node-sass": "^6.0.1",
-  "sass-loader": "^10.4.1",
-  "webpack": "4.46.0"
-}
-```
-
-- Node 14.21.x까지는 큰 수정 없이 통과, Node 16.x에서는 node-sass 6.x 조정으로 안정화했습니다.
-- LTS 단계마다 동일한 검증 루틴을 적용해 회귀 이슈를 조기 발견했습니다.
-- sass-loader 옵션 변천을 정리해 설정 혼선을 줄였고, 장기적으로 빌드 체인 업데이트(webpack, vue-loader, sass-loader)가 필요함을 확인했습니다.
+👉 이번 경험으로, 장기적으로 Vue 3 + webpack 5 이상 업그레이드가 필요하다는 점을 다시 확인했습니다.
+또한, node-sass는 더 이상 유지보수 대상이 아니므로 dart-sass로 전환하는 것이 필수적입니다.
 
 ---
 
-## 5. 기술 스택 (Tech Stack)
+## 6. 참고 자료
 
-`Node.js` `nvm` `node-sass` `sass-loader` `webpack` `npm`
+Node.js 22 Release Notes
+
+webpack migration guide
+
+Sass 공식 문서
 
 ---
 
-## 6. 참고 자료 (References)
+## 🗓️ 업데이트 내역
 
-- [node-sass (npm)](https://www.npmjs.com/package/node-sass#node-version-support-policy)
+- **2025-08-26:**  
+  - 라이브러리 및 스크립트 정리, 빌드 크기 1.20% 감소 (25.1MB → 24.8MB)
+  - **개발 기간:** 25.08.18 - 25.08.26
+
+---

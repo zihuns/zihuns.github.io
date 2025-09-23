@@ -1,6 +1,6 @@
 ---
 title: "TDD문화 도입 | (2) 주간 커버리지 관리"
-contribution: 100
+contribution: 60
 date: 2025-08-10 01:00:00 +0900
 lastmod: 2025-09-22 14:30:00 +0900
 start_date: 2025-07-29
