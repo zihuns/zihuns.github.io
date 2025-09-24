@@ -39,10 +39,10 @@ excerpt: "Node.js LTS 16에서 22로 업그레이드하면서 겪은 빌드 환�
 - **상황:** Node.js 22 환경에서 빌드 시 `OpenSSL` 관련 오류 발생.  
 - webpack 4는 오래된 Node.js 버전 기준으로 작성된 의존성이 많아, 최신 LTS와 충돌했습니다.  
 
-#### 대표 에러 메시지 (예시)
-```yaml
-error:0308010C:digital envelope routines::unsupported
-```
+#### 대표 에러 메시지
+> Error: Unsupported PKCS12 PFX data
+
+![warning.png](/assets/img/2025-01-25/nodejs_version_2_1.png)
 
 이 문제는 `--openssl-legacy-provider` 플래그를 붙여 해결할 수 있었지만, 근본적으로는 **webpack 5 업그레이드**가 필요합니다.  
 
@@ -83,6 +83,72 @@ npm install sass --save-dev
 
 기존의 sass-loader 설정에서 특별히 바꿀 필요는 없었고, 단순히 node-sass 대신 sass 패키지를 사용하도록만 수정했습니다.
 
+`package.json`에서는 다음과 같이 의존성이 변경됩니다.
+
+```diff
+- "node-sass": "^6.0.1",
++ "sass": "^1.89.2",
+```
+
+<br/>
+
+### 4.1 Sass 마이그레이션 이슈
+
+`dart-sass`로 전환하는 과정에서 몇 가지 추가적인 수정이 필요했습니다.
+
+#### 1) `@import` 대신 `@use` 사용
+
+빌드 시 아래와 같은 경고가 발생했습니다. 이는 `dart-sass`가 모듈 시스템을 `@import`에서 `@use`와 `@forward`로 변경했기 때문입니다.
+
+!Sass @import 경고
+
+> **Deprecation [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.**
+> 
+> **Deprecation [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.**
+
+![warning.png](/assets/img/2025-01-25/nodejs_version_2_2.png)
+
+`@import`는 전역적으로 스타일을 불러와 변수나 믹스인 충돌의 위험이 있었지만, `@use`는 모듈별로 네임스페이스를 가지므로 더 안정적입니다.
+
+```scss
+// AS-IS
+@import 'variables';
+
+// TO-BE
+@use 'variables' as *; // 변수를 전역처럼 사용
+```
+
+#### 2) `/deep/` 선택자 변경
+
+Vue에서 컴포넌트의 스코프 스타일을 뚫고 하위 컴포넌트에 스타일을 적용하기 위해 사용하던 `/deep/` (또는 `>>>`) 선택자는 `::v-deep`으로 변경해야 합니다.
+
+```scss
+// AS-IS
+/deep/ .child-component {
+  color: red;
+}
+
+// TO-BE
+::v-deep .child-component {
+  color: red;
+}
+```
+
+#### 3) `@extend` 문법 오류
+
+`@extend` 규칙에서 복합 선택자(placeholder와 변수 결합)를 사용하는 문법이 더 이상 지원되지 않아 오류가 발생했습니다.
+
+```scss
+// AS-IS: 에러 발생
+$icon: &;
+@extend #{$icon};
+
+// TO-BE: 정적 선택자로 변경
+@extend .icon;
+```
+
+이러한 변경사항들을 적용하여 `dart-sass` 환경에 맞게 코드를 수정했습니다.
+
 ---
 
 ## 5. 정리 (Result & Learning)
@@ -107,6 +173,8 @@ Node.js 22 Release Notes
 webpack migration guide
 
 Sass 공식 문서
+
+https://sass-lang.com/documentation/breaking-changes/legacy-js-api/
 
 ---
 
