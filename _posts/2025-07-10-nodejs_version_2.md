@@ -168,13 +168,8 @@ $icon: &;
 
 ## 6. 참고 자료
 
-Node.js 22 Release Notes
-
-webpack migration guide
-
-Sass 공식 문서
-
-https://sass-lang.com/documentation/breaking-changes/legacy-js-api/
+- [Stackoverflow - OpenSSL Legacy Provider](https://stackoverflow.com/questions/69962209/what-is-openssl-legacy-provider-in-node-js-v17)
+- [Sass 공식 문서](https://sass-lang.com/documentation/)
 
 ---
 
