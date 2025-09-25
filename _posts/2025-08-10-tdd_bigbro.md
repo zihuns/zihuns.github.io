@@ -6,9 +6,8 @@ date: 2025-08-10 01:00:00 +0900
 lastmod: 2025-09-22 14:30:00 +0900
 start_date: 2025-07-29
 end_date: 2025-07-30
-publish: false
 categories: [Frontend, Test]
-tags: [TDD, Vitest, 테스트, 프론트엔드, CI]
+tags: [TDD, coverage, Next.js, TypeScript, vitest, bigbro]
 excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 문화 정착 과정을 공유합니다."
 ---
 
@@ -18,88 +17,163 @@ excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 �
 
 ---
 
-## 1. 문제 상황 또는 동기 (Motivation)
-- 기존에는 테스트코드의 필요성을 크게 느끼지 못했으나, 실제 서비스 운영 중 잦은 회귀 버그와 코드 변경에 대한 불안감이 있었습니다.
-- "모닥불 테스트코드" 영상과 "프런트엔드 개발을 위한 테스트 입문" 서적을 접하며 테스트의 중요성을 인식하게 되었습니다.
+## 1. 개요
+
+사내 BigBro UI는 **Next.js + TypeScript** 기반의 프론트엔드 모니터링 시스템입니다.  
+이번 개선 작업에서는 **테스트 커버리지 데이터의 접근성과 가시성**을 높이는 것을 목표로 했습니다.  
+
+특히 `Vitest coverage-summary.json`을 **S3에 적재**하고, 이를 Bigbro UI에서 시각화하여 팀 단위로 커버리지를 손쉽게 확인할 수 있도록 개선했습니다.
+
+![주간 대시보드](/assets/img/2025-01-25/tdd_bigbro_3.png)
 
 ---
 
-## 2. 목표 및 요구사항 (Goal & Requirements)
-- 신규 기능/버그 수정 시 TDD 사이클을 적용하여 품질을 높이고자 함
-- AI 에이전트를 활용해 SB 기반의 요건 및 기능 중심 테스트케이스를 생성(AAA 패턴 적용)
-- 커버리지 변화 추이를 관리할 수 있는 대시보드 구축
-- GitLab CI에 테스트 검증 프로세스 추가
+## 2. 주요 개선 사항
 
----
+### 2.1 환경별 동적 설정
+```tsx
+const useCoverage = () => {
+  const PLUGIN_URL = process.env.NEXT_PUBLIC_PLUGIN_URL;
 
-## 3. 구현 과정 (Implementation)
-
-### 3.1 주요 코드/로직 설명
-- Vitest 환경에서 SB 기반 테스트케이스를 작성하고, AAA 패턴을 적용
-
-```js
-// vitest.config.ts
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-
-export default defineConfig({
-  plugins: [vue()],
-  test: {
-    globals: true,          // describe, it 글로벌 사용
-    environment: 'jsdom',   // 브라우저 API 모킹
-    setupFiles: ['./tests/setup.ts'], // 공통 초기화
-    coverage: {
-      reporter: ['text', 'lcov'],
-      exclude: ['tests/**']
-    }
-  }
-})
+  return useQuery(['coverage'], async () => {
+    const response = await fetch(`${PLUGIN_URL}/api/coverage`);
+    return response.json();
+  });
+};
 ```
+{: file="useCoverage.tsx" }
+- 환경 변수를 통한 플러그인 URL 동적 설정
+- 개발/테스트/운영 환경별 설정 분리
+- Next.js 환경 변수 시스템 활용
 
-```js
-// AAA 패턴 예시
-describe('주문 버튼', () => {
-  it('클릭 시 주문 요청을 전송한다', async () => {
-    // Arrange
-    render(<OrderButton />)
-    // Act
-    await userEvent.click(screen.getByRole('button', { name: /주문/i }))
-    // Assert
-    expect(fetchSpy).toHaveBeenCalledWith('/api/order')
-  })
-})
+---
+
+### 2.2 사이드바 네비게이션 개선
+```tsx
+interface CoverageTree {
+  [year: string]: {
+    [month: string]: Array<{
+      file: string;
+      week: string;
+      text: string;
+    }>;
+  };
+}
+
+const Sidebar: React.FC = () => {
+  const getCoverageTree = (coverList: string[]) => {
+    const tree: CoverageTree = {};
+    // 파일명을 연도-월-주차 구조로 변환
+    // ...
+  };
+
+  return (
+    // 트리 구조 UI 렌더링
+  );
+};
 ```
+{: file="Sidebar.tsx" }
+- 트리 구조 기반 네비게이션 제공
+- 커버리지 파일명을 연도 → 월 → 주차 계층으로 변환
+- 데이터 탐색 및 히스토리 추적 용이
 
-### 3.2 시행착오/트러블슈팅
-- 통합 테스트로 매장 결함을 찾으려 했으나 시나리오 복잡도로 실패
-- playwright-MCP 기반 E2E 시도 → 동적 컴포넌트 세팅 탓에 일관성 부족
-- 단위 테스트(TDD)부터 시작해 E2E/UI로 확장하기로 결정
-- Options API로 작성된 기존 컴포넌트 테스트가 Composition API 전환으로 실패 → Composition API 전용 global setup 구성 후 재작성
-- 완성된 컴포넌트에 AI로 테스트를 “역-작성”하는 규칙을 사용했으나 → TDD 흐름과 맞지 않아 SB 기반 요건 → 테스트 순서로 규칙 변경
-
----
-
-## 4. 결과 및 느낀 점 (Result & Retrospective)
-- TDD 도입 후 신규 기능/버그 수정 시 안정감이 크게 향상됨
-- SB 기반 테스트케이스가 요건 문서 역할을 하여, 협업 및 코드 리뷰가 쉬워짐
-- 테스트 목적과 범위에 대해 명확히 고민하게 되었고, 코드 품질에 대한 인식이 높아짐
-- 커버리지 관리 대시보드로 테스트 사각지대를 빠르게 파악할 수 있었음
-- 앞으로는 E2E 및 UI 테스트 자동화까지 점진적으로 확대할 계획
-
----
-
-## 5. 기술 스택 (Tech Stack)
-
-`Next.js` `TypeScript` `React` `Webpack` `CoreUI/React`  
-`Vue` `JavaScript` `Vite` `Vitest` `@vue/test-utils` `Vitest/ui` `Vitest/coverage-v8`  
-`GitLab` `GitLab CI` `Docker`
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">AS-IS</th>
+      <th style="text-align: center">TO-BE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><img src="/assets/img/2025-01-25/tdd_bigbro_1.png" alt="AS-IS" width="250px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/2025-01-25/tdd_bigbro_2.png" alt="TO-BE" width="250px"></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
-## 6. 참고 자료 (References)
-- [Vitest 공식 문서](https://vitest.dev/)
-- [모닥불 테스트코드 유튜브](https://www.youtube.com/watch?v=Q1b6TC5rQnA)
-- [프런트엔드 개발을 위한 테스트 입문](https://book.naver.com/bookdb/book_detail.nhn?bid=22527816)
+### 2.3 테이블 정렬 기능
 
+```tsx
+const CoverageTable: React.FC<Props> = () => {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'lines',
+    direction: 'desc'
+  });
 
+  const handleSort = (column: keyof CoverageMetrics) => {
+    // 정렬 로직 구현
+  };
 
+  return (
+    // 테이블 UI 렌더링
+  );
+};
+```
+{: file="index.tsx" }
+- 컬럼 정렬 기능으로 커버리지 지표 분석 편의성 향상
+- 타입 안전성을 확보하여 런타임 에러 최소화
+- 직관적인 데이터 분석 경험 제공
+
+---
+
+### 2.4 주차별 데이터 변환
+
+```tsx
+const weekLabelFromFile = (filename: string): string => {
+  const match = filename.match(/^coverage-(\d{4})-(\d{2})-(\d+)w\.json$/);
+  return match ? `${match[1]}년 ${parseInt(match[2])}월 ${match[3]}주차` : filename;
+};
+```
+{: file="Sidebar.tsx" }
+- 커버리지 파일명을 주차 단위 라벨로 변환
+- UI에서 히스토리 기반 탐색 가능
+- 가독성과 유지보수성 향상
+
+---
+
+## 3. 개선 효과
+
+- 환경별 설정 관리로 안정성 향상
+- UI 개선으로 데이터 탐색성 강화
+- 정렬/트리 구조/주차별 라벨링으로 팀 협업 생산성 증가
+
+---
+
+## 🗓️ 업데이트 내역
+
+- **2025-08-21:**
+  - 커버리지 탭 메뉴 트리 구조 변환
+  - **개발 기간:** 25.08.19 - 25.08.20
+
+- **2025-08-13:**
+  - 커버리지 테이블 정렬 기능 추가
+  - **개발 기간:** 2025-08-11 - 2025-08-12
+
+---
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">주간 대시보드</th>
+      <th style="text-align: center">전주 대비 커버리지</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><img src="/assets/img/2025-01-25/tdd_bigbro_4.png" alt="AS-IS" width="350px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/2025-01-25/tdd_bigbro_5.png" alt="TO-BE" width="350px"></td>
+    </tr>
+  </tbody>
+</table>
+
+> **추신.** 
+> 
+> 초기 커버리지 화면은 `vitest/ui`를 본따서 구현했고, 이후 **준희** 님께서 SonarQube 대시보드처럼 UI를 개선하는 작업을 진행해주셨습니다.
+>
+> 본문에 명시된 기여도 60%는 이러한 협업 과정을 반영한 것입니다.
+>
+> 멋진 UI를 만들어주신 준희님께 다시 한번 감사를 전합니다.😊
+{: .prompt-tip }

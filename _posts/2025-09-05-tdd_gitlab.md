@@ -5,7 +5,7 @@ date: 2025-09-05 01:00:00 +0900
 lastmod: 2025-09-23 22:52:53 +0900
 start_date: 2025-08-07
 end_date: 2025-08-26
-categories: [Frontend, CI/CD]
+categories: [Frontend, Test, CI/CD]
 tags: [GitLab, CI/CD, Vitest, Coverage, Vue.js, Test]
 excerpt: "GitLab CI/CD와 Vitest를 활용해 테스트 커버리지 자동화 및 관리 시스템을 구축한 과정과 시행착오를 정리합니다."
 ---
