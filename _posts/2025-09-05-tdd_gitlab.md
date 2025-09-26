@@ -107,7 +107,7 @@ test_coverage:
 - 수동 커버리지 보고서 작성 제거
 - 일관된 품질 관리 체계 구축
 - Slack 알림 연동으로 가시성 향상
-
+![Slack 알림](/assets/img/2025-01-25/tdd_gitlab_5.png)
 ---
 
 ## 7. 시행착오

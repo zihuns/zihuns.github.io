@@ -43,6 +43,18 @@ script_includes:
             기여도 {{ page.contribution }}%
           </span>
         {% endif %}
+        {% if page.members %}
+          <span>
+            참여인원 {{ page.members }}명
+          </span>
+        {% endif %}
+        {% if page.role %}
+          <span>
+            역할: {{ page.role }}
+          </span>
+        {% endif %}
+      </div>
+      <div>
         {% if page.start_date and page.end_date %}
           <span>
             개발 기간: {{ page.start_date | date: "%Y.%m.%d" }} ~ {{ page.end_date | date: "%Y.%m.%d" }}
