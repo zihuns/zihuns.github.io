@@ -11,8 +11,8 @@ excerpt: "GitLab CI/CD와 Vitest를 활용해 테스트 커버리지 자동화 �
 ---
 
 > 📌 이 글은 **TDD 시리즈** 중 3편입니다.  
-> 1편: [Vitest](/posts/tdd_vitest)  
-> 2편: [주간 커버리지 관리](/posts/tdd_bigbro)
+> 1편: [Vitest 전환과 커버리지 기반 품질 관리](/posts/tdd_vitest)  
+> 2편: [주간 커버리지 대시보드로 시각화하기](/posts/tdd_bigbro)
 
 ---
 
