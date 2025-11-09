@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vitest 단위 테스트 발표</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="presentation">
+      <!-- Slide 1: 표지 -->
+      <div class="slide active" style="flex-direction: row; justify-content: space-around; align-items: center">
+        <div>
+          <h1>Vitest와 함께,<br />더 빠르고 안정적인<br />프론트엔드 개발하기</h1>
+          <p class="subtitle">Vue 컴포넌트 단위 테스트 도입 사례 및 성과 공유</p>
+          <p class="author">발표자: 서지훈 | 소속: 파인딩개발팀</p>
+        </div>
+        <div style="text-align: center">
+          <img src="assets/vitest-logo.svg" alt="Vitest Logo" style="width: 250px; opacity: 0.9" />
+        </div>
+      </div>
+
+      <!-- Slide 2: 왜 테스트 자동화가 필요한가? -->
+      <div class="slide">
+        <h2>왜 테스트 자동화가 필요한가?</h2>
+        <div class="problem-solution">
+          <div class="box problem">
+            <h3 style="color: white; margin-bottom: 20px">😰 Problem</h3>
+            <ul style="margin-left: 0; list-style: none">
+              <li>🔄 버그 수정 → 새로운 버그 발생의 악순환</li>
+              <li>⏰ 수동 테스트의 시간적 한계</li>
+              <li>😓 반복적인 회귀 테스트의 피로감</li>
+              <li>🤝 협업 시 사이드 이펙트 증가</li>
+            </ul>
+          </div>
+          <div class="box solution">
+            <h3 style="color: white; margin-bottom: 20px">✨ Solution</h3>
+            <ul style="margin-left: 0; list-style: none">
+              <li>🛡️ 코드 안정성 확보</li>
+              <li>💪 리팩토링 자신감 향상</li>
+              <li>⚡ 협업 효율 극대화</li>
+              <li>📈 지속 가능한 개발 문화</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: 목차 (Agenda) - 이 슬라이드는 이미 있습니다 -->
+      <div class="slide">
+        <h2>Today's Agenda</h2>
+        <div class="steps">
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">Part 1. 테스트 인프라 구축</h3>
+            <p style="color: #718096; font-style: italic">빠르고 견고한 테스트 환경은 어떻게 만들었을까?</p>
+          </div>
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">Part 2. 프로젝트 적용 사례</h3>
+            <p style="color: #718096; font-style: italic">실제 Vue 컴포넌트는 어떻게 테스트했을까?</p>
+          </div>
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">Part 3. 모니터링 및 성과</h3>
+            <p style="color: #718096; font-style: italic">그래서, 무엇이 얼마나 좋아졌을까?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 1 시작 슬라이드 -->
+      <div class="slide">
+        <div style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center">
+          <p class="subtitle" style="font-size: 2em; margin-bottom: 20px">Part 1</p>
+          <h1 style="font-size: 3.5em">테스트 인프라 구축</h1>
+          <p class="subtitle" style="font-size: 1.5em; margin-top: 20px; color: #a0aec0">빠르고 견고한 테스트 환경은 어떻게 만들었을까?</p>
+        </div>
+      </div>
+
+      <!-- Slide 5: 왜 Vitest를 선택했는가? -->
+      <div class="slide">
+        <h2>기술 스택: 왜 Vitest를 선택했는가?</h2>
+        <div class="features">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>빠른 속도</h3>
+            <p>Vite 기반으로 Jest 대비 10배 이상 빠른 테스트 실행</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>쉬운 설정</h3>
+            <p>별도의 트랜스파일 설정 없이 즉시 사용 가능</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💎</div>
+            <h3>좋은 DX</h3>
+            <p>직관적인 UI와 HMR 지원으로 개발 경험 향상</p>
+          </div>
+        </div>
+        <h3 style="margin-top: 40px">주요 기술 스택</h3>
+        <div class="tech-stack">
+          <div class="tech-item">Vitest</div>
+          <div class="tech-item">@vue/test-utils</div>
+          <div class="tech-item">MSW</div>
+          <div class="tech-item">Faker.js</div>
+          <div class="tech-item">MockDataBuilder.js(자체제작)</div>
+        </div>
+      </div>
+
+      <!-- Slide 6: vitest.config.js -->
+      <div class="slide">
+        <h2>테스트 환경 설정: vitest.config.js</h2>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.8em">
+        <span class="highlight">// vitest.config.js</span>
+        export default defineConfig({
+            test: {
+                <span class="highlight">setupFiles</span>: path.resolve(__dirname, "__vitest__/vitest.setup.js"),
+                
+                // 환경 설정
+                <span class="highlight">globals</span>: true,
+                <span class="highlight">environment</span>: "jsdom",
+                
+                // 리포팅
+                <span class="highlight">silent</span>: process.env.CI === "true",
+                <span class="highlight">reporters</span>: process.env.CI === "true" ? ["default", "junit"] : ["default"],
+                <span class="highlight">outputFile</span>: { junit: "./junit.xml" },
+                
+                // 테스트 파일
+                <span class="highlight">include</span>: [path.resolve(__dirname, "__vitest__/**/*.test.{js,ts,tsx}")],
+                
+                // 커버리지
+                <span class="highlight">coverage</span>: {
+                  <span class="highlight">enabled</span>: process.env.COVERAGE === "true",
+                  <span class="highlight">reporter</span>: ["html", "json-summary", "text", "cobertura"],
+                  <span class="highlight">include</span>: ["__vitest__/**/*.test.{js,ts,tsx}", "src/**/*.{js,ts,vue,tsx,ts}"],
+              }
+            },
+            resolve: {
+                <span class="highlight">alias</span>: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+            },
+        });
+        </div>
+      </div>
+
+      <!-- Slide 7: vitest.setup.js -->
+      <div class="slide">
+        <h2>테스트 환경 설정: vitest.setup.js</h2>
+        <p class="content" style="margin-bottom: 20px">모든 테스트 실행 전, 동일한 환경을 제공하는 역할</p>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.85em">
+        <span class="highlight">// /__vitest__/vitest.setup.js</span>
+        import Vue from "vue";
+        import { vi } from "vitest";
+        import modulesPlugin from "@/assets/js/modulesPlugin.js";
+        import productMixinV2 from "@/assets/js/productMixinV2.js";
+        import { moduleUtil, stringUtil } from "@lotteon/display-utils";
+
+        <span class="highlight">// 1. Vue 기본 설정</span>
+        Vue.use(modulesPlugin);
+        Vue.mixin(productMixinV2);
+
+        <span class="highlight">// 2. 외부 의존성 Mocking</span>
+        global.EventBus = { $emit: vi.fn(), $on: vi.fn(), $off: vi.fn() };
+        global.$modal = { show: vi.fn(), hide: vi.fn() };
+
+        <span class="highlight">// 3. 이미지 최적화 함수 Mocking</span>
+        const $imgOptimize = (url, dims) => `${url || ""}${dims || ""}`;
+        global.$imgOptimize = $imgOptimize;
+
+        <span class="highlight">// 4. 전역 유틸리티 함수 등록</span>
+        Object.assign(global, { moduleUtil, stringUtil });
+        </div>
+      </div>
+
+      <!-- Slide 8: MockDataBuilder.js -->
+      <div class="slide">
+        <h2>테스트 데이터 생성: MockDataBuilder.js</h2>
+        <p class="content" style="margin-bottom: 20px">복잡한 API 응답 데이터를 쉽게 만들기 위해 <span class="highlight">빌더 패턴</span> 도입</p>
+        <div>
+          <h3 style="font-size: 1.4em; color: #e53e3e">As-Is: 수동 작성 (약 5분 소요)</h3>
+          <!-- prettier-ignore -->
+          <div class="code-block" style="font-size: 0.8em">
+          const mockData = {
+            moduleInfo: { moduleType: 'product_05', ... },
+            productListData: {
+              product: [
+                { prdNo: 'P001', prdNm: '상품1', ... },
+                { prdNo: 'P002', prdNm: '상품2', ... }
+              ]
+            }
+          };
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 1.4em; color: #38a169">To-Be: 빌더 사용 (약 1분 소요)</h3>
+          <!-- prettier-ignore -->
+          <div class="code-block" style="font-size: 0.8em">
+          <span class="highlight">// 직관적인 데이터 생성</span>
+          const mockData = new MockDataBuilder().addModule("product_05").withProducts(2).build();
+          </div>
+        </div>
+        <p class="content" style="margin-top: 20px; color: #667eea; font-weight: 600">✨ 효과: 테스트 데이터 준비 시간 80% 단축</p>
+      </div>
+
+      <!-- Slide 9: MSW -->
+      <div class="slide">
+        <h2>API Mocking: MSW로 환경 통일하기</h2>
+        <p class="content" style="margin-bottom: 20px">
+          <span class="highlight">Mock Service Worker</span>를 사용해 브라우저와 Node.js(테스트 환경)에서 동일한 Mock 데이터를 사용합니다.
+        </p>
+        <div style="text-align: center; margin: 20px 0">
+          <img src="assets/msw-workflow-diagram.png" alt="MSW Workflow" style="max-width: 90%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)" />
+        </div>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="margin-top: 30px; font-size: 0.8em">
+        <span class="highlight">// src/mocks/handlers/product_05.handler.js - 재사용 가능한 핸들러 팩토리</span>
+        import { http, HttpResponse } from "msw";
+        import MockDataBuilder from "@mock/builder/MockDataBuilder.js";
+
+        export const createProduct05Handlers = () => ({
+          <span class="highlight">// 기본 핸들러 (상품 2개)</span>
+          <span class="highlight">default</span>: http.get("/api/display/product_05", () => {
+            const data = new MockDataBuilder().addModule("product_05").withProducts(2).build();
+            return HttpResponse.json({ returnCode: "200", data });
+          }),
+          <span class="highlight">// 에러 응답 핸들러</span>
+          <span class="highlight">error</span>: http.get("/api/display/product_05", () => HttpResponse.json(null, { status: 500 })),
+        });
+        </div>
+      </div>
+
+      <!-- Part 2 시작 슬라이드 -->
+      <div class="slide">
+        <div style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center">
+          <p class="subtitle" style="font-size: 2em; margin-bottom: 20px">Part 2</p>
+          <h1 style="font-size: 3.5em">프로젝트 적용 사례</h1>
+          <p class="subtitle" style="font-size: 1.5em; margin-top: 20px; color: #a0aec0">실제 Vue 컴포넌트는 어떻게 테스트했을까?</p>
+        </div>
+      </div>
+
+      <!-- Slide 11: 테스트 시나리오 소개 -->
+      <div class="slide">
+        <h2>테스트 시나리오 소개</h2>
+        <p class="content" style="margin-bottom: 30px">
+          대상 컴포넌트: <code style="background: #edf2f7; padding: 5px 10px; border-radius: 5px">product_05.vue</code>
+        </p>
+        <h3>주요 테스트 시나리오</h3>
+        <div class="steps">
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">기본 렌더링</h3>
+            <p>MockDataBuilder로 생성한 데이터를 Props로 주입했을 때, 상품 개수에 따라 모듈이 정상적으로 노출/비노출 되는가?</p>
+          </div>
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">API 연동 (MSW)</h3>
+            <p>MSW로 실제 API 응답을 모킹했을 때, 응답 데이터에 따라 모듈이 정상적으로 렌더링 되는가?</p>
+          </div>
+          <div class="step">
+            <h3 style="margin: 0 0 10px 0">Edge Case</h3>
+            <p>API 응답이 실패하거나, 상품 개수가 부족할 때 적절히 처리되는가?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: 테스트 케이스 1 (기존) -->
+      <div class="slide">
+        <h2>테스트 케이스 1: 기본 렌더링</h2>
+        <h3 style="color: #667eea">Props 데이터를 직접 주입하여 테스트</h3>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.9em">
+        describe("product_05 컴포넌트", () => {
+          <span class="highlight">// 시나리오: 상품이 2개 미만이면 모듈이 노출되지 않아야 함</span>
+          it("productListData.product가 2개 미만이면 노출 안 됨", () => {
+            <span class="highlight">// Arrange: 상품 1개 데이터 생성</span>
+            const data = new MockDataBuilder()
+              .addModule("product_05")
+              .withProducts(1)
+              .build();
+
+            <span class="highlight">// Act: 컴포넌트 마운트</span>
+            const wrapper = mount(Product05, { propsData: { data } });
+
+            <span class="highlight">// Assert: isView는 false이고, module-wrapper가 없음</span>
+            expect(wrapper.vm.isView).toBe(false);
+            expect(wrapper.html()).not.toContain("module-wrapper");
+          });
+        });
+        </div>
+      </div>
+
+      <!-- Slide 13: 테스트 케이스 2 (기존) -->
+      <div class="slide">
+        <h2>테스트 케이스 2: API 연동 (MSW)</h2>
+        <h3 style="color: #667eea">실제 API 호출을 시뮬레이션하여 테스트</h3>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.9em">
+        describe("product_05 컴포넌트 (API 연동)", () => {
+          <span class="highlight">// 시나리오: API로부터 상품 2개를 받아와서 모듈이 노출되어야 함</span>
+          it("API로부터 상품 2개를 받아와서 모듈이 노출되어야 함", async () => {
+            <span class="highlight">// Arrange: MSW로 API 응답 모킹 (상품 2개 반환)</span>
+            server.use(createProduct05Handlers().default);
+
+            <span class="highlight">// Act: API 호출 및 컴포넌트 마운트</span>
+            const response = await fetch("/api/display/product_05");
+            const result = await response.json();
+            const wrapper = mount(Product05, { propsData: { data: result.data } });
+
+            <span class="highlight">// Assert: isView는 true이고, 상품 2개가 렌더링됨</span>
+            expect(wrapper.vm.isView).toBe(true);
+            expect(wrapper.vm.productListData.product.length).toBe(2);
+          });
+        });
+        </div>
+      </div>
+
+      <!-- Slide 14: 테스트 케이스 3 (Edge Case) -->
+      <div class="slide">
+        <h2>테스트 케이스 3: Edge Case</h2>
+        <h3 style="color: #667eea">API 응답이 비정상일 경우를 테스트</h3>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.9em">
+        describe("product_05 컴포넌트 (Edge Case)", () => {
+          <span class="highlight">// 시나리오: API로부터 상품을 1개만 받으면 모듈이 노출되지 않아야 함</span>
+          it("API로부터 상품 1개만 받으면 모듈이 노출되지 않아야 함", async () => {
+            <span class="highlight">// Arrange: MSW로 상품 1개만 반환하도록 모킹</span>
+            server.use(createProduct05Handlers().custom(1));
+
+            <span class="highlight">// Act: API 호출 및 컴포넌트 마운트</span>
+            const response = await fetch("/api/display/product_05");
+            const result = await response.json();
+            const wrapper = mount(Product05, { propsData: { data: result.data } });
+
+            <span class="highlight">// Assert: isView는 false이고, module-wrapper가 없음</span>
+            expect(wrapper.vm.isView).toBe(false);
+            expect(wrapper.html()).not.toContain("module-wrapper");
+          });
+        });
+        </div>
+      </div>
+
+      <!-- Slide 14: Vitest UI (기존) -->
+      <div class="slide">
+        <h2>테스트 실행 및 결과 확인: vitest --ui</h2>
+        <div class="content">
+          <h3 style="margin-bottom: 10px">🎨 Vitest UI의 주요 기능</h3>
+          <ul style="margin-block: 10px">
+            <li><strong>실시간 테스트 실행:</strong> 파일 저장 시 자동으로 관련 테스트 재실행</li>
+            <li><strong>시각적 결과 확인:</strong> 통과/실패를 직관적인 UI로 확인</li>
+            <li><strong>상세한 디버깅 정보:</strong> 각 테스트의 로그, 에러 스택 트레이스 제공</li>
+            <li><strong>필터링 & 검색:</strong> 특정 테스트만 선택적으로 실행 가능</li>
+          </ul>
+          <div style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+            <!-- 💡 여기에 화면 녹화 영상(gif, mp4)을 삽입하세요. -->
+            <video
+              src="assets/vitest-ui-realtime-demo.mov"
+              autoplay
+              loop
+              muted
+              playsinline
+              style="width: 100%; max-width: 900px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)"
+            ></video>
+            <p style="color: #718096; font-style: italic; margin: 0">
+              💡 <strong>Demo:</strong> 코드를 수정하자마자 테스트 결과가 UI에 실시간으로 반영되는 모습
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 3 시작 슬라이드 (기존) -->
+      <div class="slide">
+        <div style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center">
+          <p class="subtitle" style="font-size: 2em; margin-bottom: 20px">Part 3</p>
+          <h1 style="font-size: 3.5em">모니터링 및 성과</h1>
+          <p class="subtitle" style="font-size: 1.5em; margin-top: 20px; color: #a0aec0">그래서, 무엇이 얼마나 좋아졌을까?</p>
+        </div>
+      </div>
+
+      <!-- Slide 17: 단위 테스트 개발 워크플로우 (타임라인, 이미지 추가) -->
+      <div class="slide">
+        <h2>단위 테스트 개발 워크플로우</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-icon">📝</div>
+            <div class="timeline-content">
+              <h3>1. 기획 & 테스트 작성</h3>
+              <p>기능 명세 기반으로 테스트 시나리오를 구상하고, 테스트 코드를 먼저 작성합니다.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon">💻</div>
+            <div class="timeline-content">
+              <h3>2. 로컬 개발</h3>
+              <p>커밋 시점에 변경된 파일의 테스트를 자동으로 실행하여 즉각적인 피드백을 받습니다.</p>
+            </div>
+            <div class="hover-fail-image-container" >
+              <img src="assets/local-test-fail-precommit.png" alt="Local Test Fail" />
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon">🚀</div>
+            <div class="timeline-content">
+              <h3>3. 코드 리뷰 (MR)</h3>
+              <p>MR 생성 시 전체 테스트와 커버리지를 측정하여 코드 통합 품질을 보증합니다. (GitLab CI)</p>
+            </div>
+            <div class="hover-fail-image-container" >
+              <img src="assets/merge-request-fail-ci.png" alt="Merge Request Fail" />
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon">🚢</div>
+            <div class="timeline-content">
+              <h3>4. 배포</h3>
+              <p>모든 테스트를 통과한 코드만 배포하여 서비스의 최종 안정성을 확보합니다. (CI/CD)</p>
+            </div>
+            <div class="hover-fail-image-container" >
+              <img src="assets/ci-deploy-fail.png" alt="Deploy Fail" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: CI/CD 연동 -->
+      <div class="slide">
+        <h2>CI/CD 연동 및 자동화</h2>
+        <!-- prettier-ignore -->
+        <div class="code-block" style="font-size: 0.9em">
+        <span class="highlight">// .gitlab-ci.yml</span>
+        <span class="highlight"></span>coverage</span>:
+          <span class="highlight">stage</span>: test
+          <span class="highlight">variables</span>:
+            <span class="highlight">CI</span>: "true"
+            <span class="highlight">COVERAGE</span>: "true"
+          <span class="highlight">script</span>:
+            - npx vitest run
+          <span class="highlight">artifacts</span>:
+            <span class="highlight">reports</span>:
+              <span class="highlight">junit</span>: junit.xml 
+              <span class="highlight">coverage_report</span>:
+                <span class="highlight">coverage_format</span>: cobertura
+                path: coverage/cobertura-coverage.xml
+        </div>
+        <h3 style="margin-top: 30px">자동화 파이프라인</h3>
+        <div class="steps">
+          <div class="step">
+            <p><strong>MR(Merge Request) 생성 시 GitLab CI 파이프라인 실행</strong></p>
+          </div>
+          <div class="step">
+            <p><strong>`vitest run` 명령어로 단위 테스트 및 커버리지 측정 자동 수행</strong></p>
+          </div>
+          <div class="step">
+            <p><strong>테스트 결과(JUnit)와 커버리지(Cobertura)를 GitLab에 리포팅</strong></p>
+          </div>
+          <div class="step">
+            <p><strong>배포 시 `coverage-summary.json` 파일을 S3에 업로드하여 Bigbro 대시보드 자동 갱신</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: 코드 커버리지 (기존) -->
+      <div class="slide">
+        <h2>코드 커버리지 리포트</h2>
+        <div class="metrics">
+          <div class="metric-card" style="background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%)">
+            <div class="metric-value">25.64%</div>
+            <div class="metric-label">현재 코드 커버리지 (10월 5주차)</div>
+          </div>
+          <div class="metric-card" style="background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%)">
+            <div class="metric-value">70%</div>
+            <div class="metric-label">향후 목표 커버리지</div>
+          </div>
+        </div>
+        <a href="https://bigbro.lotteon.com/coverage/" target="_blank" style="text-decoration: none">
+          <h3 style="margin-top: 30px; display: inline-block">주간 커버리지 대시보드 (Bigbro) ↗</h3>
+        </a>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin-top: 10px">
+          <img
+            src="assets/bigbro-coverage-dashboard-overview.png"
+            alt="Bigbro Coverage Dashboard Overview"
+            style="width: 100%; height: auto; max-height: 35vh; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)"
+          />
+          <img
+            src="assets/bigbro-coverage-dashboard-detail.png"
+            alt="Bigbro Coverage Dashboard Detail"
+            style="width: 100%; height: auto; max-height: 35vh; object-fit: contain; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1)"
+          />
+        </div>
+      </div>
+
+      <!-- Slide 20: 도입 성과 -->
+      <div class="slide">
+        <h2>도입 성과 및 향후 과제</h2>
+        <h3>📈 정량적 성과</h3>
+        <div class="metrics" style="grid-template-columns: repeat(4, 1fr); gap: 20px;">
+          <div class="metric-card hover-trigger" style="position: relative;">
+            <div class="metric-value">-26%</div>
+            <div class="metric-label">결함 밀도 감소<br>(작업량 대비 결함 비율)</div>
+            <div class="hover-tooltip">
+              <h4>결함 밀도 비교</h4>
+              <p><strong>vs 6-7월:</strong> 0.46 → 0.34 (-26%)</p>
+              <p><strong>vs 작년 동기:</strong> 0.97 → 0.34 (-65%)</p>
+              <hr />
+              <p>※ (결함 수) / (작업 티켓 수)</p>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">3건</div>
+            <div class="metric-label">버그 사전 차단 (CI)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">&lt;90초</div>
+            <div class="metric-label">
+              단위 테스트 720개<br />
+              실행 속도
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">-80%</div>
+            <div class="metric-label">데이터 준비 시간 단축</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; align-items: start">
+          <div>
+            <h3 style="margin-top: 30px">✨ 정성적 성과</h3>
+            <ul>
+              <li>리팩토링에 대한 자신감 향상으로 레거시 코드 개선 가속화</li>
+              <li>Merge Request 리뷰 시 테스트 코드로 의도 파악 용이</li>
+              <li>새로운 팀원의 온보딩 시간 단축</li>
+              <li class="hover-trigger" style="color: #667eea; font-weight: 600; position: relative; cursor: pointer">
+                시각적 성과(뱃지, 대시보드) 확인을 통한 개발 만족도 및 동기 부여
+                <div class="hover-image-container" >
+                  <img src="assets/gitlab-coverage-badge.png" alt="GitLab Coverage Badge" />
+                  <img src="assets/gitlab-coverage-graph.png" alt="GitLab Coverage Graph" />
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- 이미지 영역이 li 내부로 이동했습니다. -->
+          <div></div>
+        </div>
+        <h3 style="margin-top: 30px">🎯 향후 과제</h3>
+        <ul>
+          <li>단위 테스트에서 통합(Integration), E2E 테스트로 점차 확대</li>
+          <li>테스트 커버리지 70% 목표 달성</li>
+          <li>테스트 작성 문화를 전사 확산</li>
+        </ul>
+      </div>
+
+      <!-- Slide 21: Q&A -->
+      <div class="slide">
+        <div style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center">
+          <h1 style="font-size: 4em; margin-bottom: 40px">Q&A</h1>
+          <p class="subtitle" style="font-size: 2em; margin-bottom: 60px">"테스트는 비용이 아닌,<br />품질을 위한 투자입니다."</p>
+          <p style="font-size: 1.5em; color: #718096">🙏 경청해 주셔서 감사합니다</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-number"><span id="current-slide">1</span> / <span id="total-slides">22</span></div>
+    <div class="navigation">
+      <button id="prev" class="nav-btn">◀ Prev</button>
+      <button id="next" class="nav-btn">Next ▶</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
