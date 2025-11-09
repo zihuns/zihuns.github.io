@@ -42,7 +42,7 @@ excerpt: "Node.js LTS 16에서 22로 업그레이드하면서 겪은 빌드 환�
 #### 대표 에러 메시지
 > Error: Unsupported PKCS12 PFX data
 
-![warning.png](/assets/img/2025-01-25/nodejs_version_2_1.png)
+![warning.png](/assets/img/nodejs_version_2/nodejs_version_2_1.png)
 
 이 문제는 `--openssl-legacy-provider` 플래그를 붙여 해결할 수 있었지만, 근본적으로는 **webpack 5 업그레이드**가 필요합니다.  
 
@@ -106,7 +106,7 @@ npm install sass --save-dev
 > 
 > **Deprecation [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.**
 
-![warning.png](/assets/img/2025-01-25/nodejs_version_2_2.png)
+![warning.png](/assets/img/nodejs_version_2/nodejs_version_2_2.png)
 
 `@import`는 전역적으로 스타일을 불러와 변수나 믹스인 충돌의 위험이 있었지만, `@use`는 모듈별로 네임스페이스를 가지므로 더 안정적입니다.
 
