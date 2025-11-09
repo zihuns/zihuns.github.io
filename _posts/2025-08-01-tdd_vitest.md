@@ -14,7 +14,8 @@ excerpt: "Vue2 기반 프로젝트에서 Jest를 Vitest로 전환하며 TDD 문�
 
 > 📌 이 글은 **TDD 시리즈** 중 1편입니다.  
 > 2편: [주간 커버리지 대시보드로 시각화하기](/posts/tdd_bigbro)  
-> 3편: [커버리지 측정 및 자동화 시스템 구축 (GitLab + Vitest)](/posts/tdd_gitlab)
+> 3편: [커버리지 측정 및 자동화 시스템 구축 (GitLab + Vitest)](/posts/tdd_gitlab)  
+> 4편: [Tech 발표, Vitest로 안정적인 프론트엔드 개발하기](/posts/tdd_ppt)
 
 ---
 
@@ -247,4 +248,3 @@ describe("TravelSearch.vue", () => {
 > 
 > 함께 더 나은 테스트코드를 위해 힘써주시는 준희님(Core Contributor)과 한나님(Contributor)께 감사를 전합니다.😊
 {: .prompt-tip }
-

@@ -13,7 +13,8 @@ excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 �
 
 > 📌 이 글은 **TDD 시리즈** 중 2편입니다.  
 > 1편: [Vitest 전환과 커버리지 기반 품질 관리](/posts/tdd_vitest)  
-> 3편: [커버리지 측정 및 자동화 시스템 구축 (GitLab + Vitest)](/posts/tdd_gitlab)
+> 3편: [커버리지 측정 및 자동화 시스템 구축 (GitLab + Vitest)](/posts/tdd_gitlab)  
+> 4편: [Tech 발표, Vitest로 안정적인 프론트엔드 개발하기](/posts/tdd_ppt)
 
 ---
 
