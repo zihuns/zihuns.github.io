@@ -25,7 +25,7 @@ excerpt: "Vitest 기반 TDD 도입 경험과 시행착오, 그리고 테스트 �
 
 특히 `Vitest coverage-summary.json`을 **S3에 적재**하고, 이를 Bigbro UI에서 시각화하여 팀 단위로 커버리지를 손쉽게 확인할 수 있도록 개선했습니다.
 
-![주간 대시보드](/assets/img/tdd_bigbro/tdd_bigbro_3.png)
+![주간 대시보드](/assets/img/tdd_bigbro/tdd_bigbro_weekly_dashboard.png)
 
 ---
 
@@ -87,8 +87,8 @@ const Sidebar: React.FC = () => {
   </thead>
   <tbody>
     <tr>
-      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_1.png" alt="AS-IS" width="250px"></td>
-      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_2.png" alt="TO-BE" width="250px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_sidebar_as_is.png" alt="AS-IS" width="250px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_sidebar_to_be.png" alt="TO-BE" width="250px"></td>
     </tr>
   </tbody>
 </table>
@@ -164,8 +164,8 @@ const weekLabelFromFile = (filename: string): string => {
   </thead>
   <tbody>
     <tr>
-      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_4.png" alt="AS-IS" width="350px"></td>
-      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_5.png" alt="TO-BE" width="350px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_weekly_dashboard_detail.png" alt="AS-IS" width="350px"></td>
+      <td style="vertical-align: top;"><img src="/assets/img/tdd_bigbro/tdd_bigbro_coverage_comparison.png" alt="TO-BE" width="350px"></td>
     </tr>
   </tbody>
 </table>

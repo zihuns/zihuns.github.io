@@ -38,7 +38,7 @@ stages:
 
 - **test 스테이지**: MR 시 자동 테스트 및 커버리지 리포트 생성
 - 업로드된 리포트를 GitLab UI와 연동해 품질 지표 확인
-![테스트 스테이지](/assets/img/tdd_gitlab/tdd_gitlab_4.png)
+![테스트 스테이지](/assets/img/tdd_gitlab/tdd_gitlab_test_stage.png)
 
 ### 2.2 Docker 기반 Node 환경
 - GitLab Runner 기본 환경에는 Node.js 미설치 → `node` 명령어 실행 불가
@@ -68,10 +68,10 @@ test_coverage:
 ```
 - **coverage badge**로 대시보드에서 상태 가시성 확보
 - MR UI에서 커버리지 수치를 직접 확인 가능
-![GitLab MR UI - 성공](/assets/img/tdd_gitlab/tdd_gitlab_1.png)
-![GitLab MR UI - 실패](/assets/img/tdd_gitlab/tdd_gitlab_3.png)
+![GitLab MR UI - 성공](/assets/img/tdd_gitlab/tdd_gitlab_mr_ui_success.png)
+![GitLab MR UI - 실패](/assets/img/tdd_gitlab/tdd_gitlab_mr_ui_failed.png)
 - JUnit & Cobertura 리포트 → GitLab과 연동해 품질 메트릭 시각화
-![JUnit 리포트](/assets/img/tdd_gitlab/tdd_gitlab_2.png)
+![JUnit 리포트](/assets/img/tdd_gitlab/tdd_gitlab_junit_report.png)
 
 ---
 
@@ -108,7 +108,7 @@ test_coverage:
 - 수동 커버리지 보고서 작성 제거
 - 일관된 품질 관리 체계 구축
 - Slack 알림 연동으로 가시성 향상
-![Slack 알림](/assets/img/tdd_gitlab/tdd_gitlab_5.png)
+![Slack 알림](/assets/img/tdd_gitlab/tdd_gitlab_slack_notification.png)
 ---
 
 ## 7. 시행착오
